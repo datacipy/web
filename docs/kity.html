@@ -42,7 +42,10 @@
     <link rel="stylesheet" href="css/owl.carousel.min.css" />
     <link rel="stylesheet" href="css/owl.theme.default.min.css" />
     <link rel="stylesheet" href="css/magnific-popup.css" />
-
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css"
+    />
     <link rel="stylesheet" href="css/flaticon.css" />
     <link rel="stylesheet" href="css/style.css" />
   </head>
@@ -116,10 +119,9 @@
 
         <div class="row">
           <div class="col-md-4">
-            <div
-              class="project img ftco-animate d-flex justify-content-center align-items-end"
-              style="background-image: url(images/c2e5kit.jpg);"
-            ></div>
+            <a data-toggle="lightbox"
+              ><img src="images/c2e5kit.jpg" class="img-fluid"
+            /></a>
           </div>
           <div class="col-md-8">
             <div class="overlay"></div>
@@ -167,10 +169,9 @@
 
         <div class="row">
           <div class="col-md-4">
-            <div
-              class="project img ftco-animate d-flex justify-content-center align-items-end"
-              style="background-image: url(images/omdazz.jpg);"
-            ></div>
+            <a data-toggle="lightbox">
+              <img src="./images/omdazz.jpg" class="img-fluid" />
+            </a>
           </div>
           <div class="col-md-8">
             <div class="overlay"></div>
@@ -363,6 +364,13 @@
     <script src="js/jquery.magnific-popup.min.js"></script>
     <script src="js/jquery.animateNumber.min.js"></script>
     <script src="js/scrollax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.min.js"></script>
+    <script>
+      $(document).on("click", '[data-toggle="lightbox"]', function (event) {
+        event.preventDefault();
+        $(this).ekkoLightbox();
+      });
+    </script>
 
     <script src="js/main.js"></script>
   </body>
