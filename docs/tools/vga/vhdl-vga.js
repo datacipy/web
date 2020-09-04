@@ -206,6 +206,9 @@ var run = function () {
     $("#sync").html(syncgen(f, p));
     $("#waves").show();
     $("#sync").show();
+    $([document.documentElement, document.body]).animate({
+      scrollTop: $("#sync").offset().top
+    }, 2000);
   });
 };
 
