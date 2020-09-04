@@ -193,8 +193,8 @@ var run = function () {
   $("#tabout tbody tr").click(function () {
     var f = JSON.parse($(this).attr("data-type"));
     var p = JSON.parse($(this).attr("data-pll"));
-    $("#hsi").attr("src", "./tools/HS" + f[10] + ".png");
-    $("#vsi").attr("src", "./tools/VS" + f[11] + ".png");
+    $("#hsi").attr("src", "./tools/vga/HS" + f[10] + ".png");
+    $("#vsi").attr("src", "./tools/vga/VS" + f[11] + ".png");
     $("#hv").html(f[2]);
     $("#hf").html(f[3]);
     $("#hs").html(f[4]);
