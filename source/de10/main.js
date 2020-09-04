@@ -38,10 +38,18 @@ ohc("global")
 
 const hdl = require("./js/hdl.js")
 
-let ast = require("./js/kit/de10nano.js")("omde10")
+
+let kits = {
+  de10lite: require("./js/kit/de10lite.js")
+}
+
+//let ast = (packName)
 //console.log(ast);
 //console.log(hdl.hdlGen(ast, "verilog"))
-console.log(hdl.qsfGen(ast))
+//console.log(hdl.qsfGen(ast))
+
+const dl = require("./js/genSet.js")
+//dl(packName, kits.de10nano, "vhdl")
 
 $(document).ready(() => {
   // on load
@@ -52,6 +60,25 @@ $(document).ready(() => {
   // Router setup
   window.onhashchange = ohc;
   window.onhashchange();
+
+  $("#de10lite button.btn-generate").click(() => {
+    let packName = $("#projectName").val().trim();
+    console.log(packName)
+    if (!packName) {
+      $("#projectName").addClass("is-invalid")
+      return;
+    }
+    let lang = $("input[name=language]:checked").val()
+    let feat = $(".features .form-check-input:checked")
+    let featureList = []
+    for (let i = 0; i < feat.length; i++) {
+      featureList.push($(feat[i]).val())
+    }
+    featureList.push($(".features option:checked").val())
+    console.log(featureList)
+    dl(packName, kits.de10lite, featureList, lang)
+  })
+
 });
 
 //chrome scroll fix

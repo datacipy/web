@@ -40,7 +40,7 @@ module.exports = (name) => {
     ast.addPort("vga_hs", "out", 1, "1", "N3", 0, "VGA")
     ast.addPort("vga_vs", "out", 1, "1", "N1", 0, "VGA")
 
-    ast.addPort("arduino_io", "inout", 16, null, ["AB5", "AB6", "AB7", "AB8", "AB9", "Y10", "AA11", "AA12", "AB17", "AA17", "AB19", "AA19", "Y19", "AB20", "AB21", "AA20"], 0, "Arduino")
+    ast.addPort("arduino_io", "inout", 16, null, ["AB5", "AB6", "AB7", "AB8", "AB9", "Y10", "AA11", "AA12", "AB17", "AA17", "AB19", "AA19", "Y19", "AB20", "AB21", "AA20"], 0, "ARDUINO")
     ast.addPort("arduino_reset_n", "inout", 1, null, "$F16", 0, "Arduino")
 
     ast.addPort("sdram_addr", "out", 13, null, ["U17", "W19", "V18", "U18", "U19", "T18", "T19", "R18", "P18", "P19", "T20", "P20", "R20"], 0, "SDRAM")
@@ -62,6 +62,21 @@ module.exports = (name) => {
     ast.addPort("gsensor_int", "in", 2, null, ["Y14", "Y13"], 1, "Accelerometer")
 
     ast.addPort("gpio", "inout", 36, null, ["V10", "W10", "V9", "W9", "V8", "W8", "V7", "W7", "W6", "V5", "W5", "AA15", "AA14", "W13", "W12", "AB13", "AB12", "Y11", "AB11", "W11", "AB10", "AA10", "AA9", "Y8", "AA8", "Y7", "AA7", "Y6", "AA6", "Y5", "AA5", "Y4", "AB3", "Y3", "AB2", "AA2"], 0, "GPIO")
+
+    ast.addPort("mtl_b", "out", 8, null, ["AB10", "AA9", "Y8", "AA8", "Y7", "AA7", "Y6", "AA6"], 0, "MTL")
+    ast.addPort("mtl_dclk", "out", 1, null, ["W10"], 0, "MTL")
+    ast.addPort("mtl_g", "out", 8, null, ["AA15", "AA14", "W13", "W12", "AB13", "AB11", "W11", "AA10"], 0, "MTL")
+    ast.addPort("mtl_hsd", "out", 1, null, ["AA5"], 0, "MTL")
+    ast.addPort("mtl_r", "out", 8, null, ["W9", "V8", "W8", "V7", "W7", "W6", "V5", "W5"], 0, "MTL")
+
+
+
+    ast.addPort("mtl_touch_i2c_scl", "out", 1, null, ["AB3"], 0, "MTL")
+    ast.addPort("mtl_touch_i2c_sda", "inout", 1, null, ["Y3"], 0, "MTL")
+    ast.addPort("mtl_touch_int_n", "in", 1, null, ["AB2"], 0, "MTL")
+    ast.addPort("mtl_vsd", "out", 1, null, ["Y4"], 0, "MTL")
+
+
 
     ast.addPort("ledr", "out", 10, "1111111111", ["A8", "A9", "A10", "B10", "D13", "C13", "E14", "D14", "A11", "B11"], 0, "LED")
     return ast

@@ -16,9 +16,11 @@ const genType = (port) => {
 }
 
 const genTypeA = (port) => {
-    //console.log(port)
     if (port.size == 1) {
-        return genPinA(port.name, port.pinAssign)
+        if (Array.isArray(port.pinAssign))
+            return genPinA(port.name, port.pinAssign[0])
+        else
+            return genPinA(port.name, port.pinAssign)
     } else {
         let out = "";
         let j = 0;

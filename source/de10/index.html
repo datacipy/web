@@ -18,7 +18,7 @@
     />
   </head>
   <body>
-    <div class="container onload" style="display: none;">
+    <div class="container onload" style="display: none">
       <nav class="navbar navbar-expand-lg sticky-top navbar-light bg-white">
         <button
           class="navbar-toggler"
@@ -49,13 +49,212 @@
       </nav>
     </div>
 
-    <div class="container onload" id="_main" style="display: none;">
-      IT WORKS!
+    <div class="container onload" id="_main" style="display: none">
+      <section id="de10lite">
+        <div class="row">
+          <div class="col">
+            <h2>DE10-LITE</h2>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-6"><img src=./img/de10lite.png class="w-100"></div>
+          <div class="col-6">
+            <form class="features">
+              <div class="form-group">
+                <label for="projectName">Project name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="projectName"
+                  placeholder="Project name"
+                />
+              </div>
+              <div class="form-group justify-content-center">
+                <div class="form-row">
+                  <div class="col-md-6">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        value="CLOCK"
+                        id="clock"
+                      />
+                      <label class="form-check-label" for="clock">
+                        Clock
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        value="LED"
+                        id="led"
+                      />
+                      <label class="form-check-label" for="led"> LED x10</label>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        value="KEY"
+                        id="buttons"
+                      />
+                      <label class="form-check-label" for="buttons">
+                        Buttons x2
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        value="VGA"
+                        id="vga"
+                      />
+                      <label class="form-check-label" for="vga"> VGA </label>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        value="ARDUINO"
+                        id="arduino"
+                      />
+                      <label class="form-check-label" for="arduino">
+                        Arduino
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        value="SEG7"
+                        id="display"
+                      />
+                      <label class="form-check-label" for="display">
+                        7segment display x6
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        value="SW"
+                        id="switch"
+                      />
+                      <label class="form-check-label" for="switch">
+                        Switch x10</label
+                      >
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        value="Accelerometer"
+                        id="accelerometer"
+                      />
+                      <label class="form-check-label" for="accelerometer">
+                        Accelerometer
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        value=""
+                        id="sdram"
+                      />
+                      <label class="form-check-label" for="sdram">
+                        SDRAM 64MB
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-row mt-3">
+                  <div class="col-12">
+                    <div class="form-group">
+                      <label for="inputState">GPIO header is for...</label>
+                      <select id="inputState" class="form-control">
+                        <option value="GPIO" selected>GPIO</option>
+                        <option value="MTL">Multi-touch LCD display</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-6">
+                  <div class="form-check form-check-inline">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="language"
+                      id="vhdl"
+                      value="vhdl"
+                      checked
+                    />
+                    <label class="form-check-label" for="vhdl">VHDL</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="language"
+                      id="verilog"
+                      value="verilog"
+                      checked
+                    />
+                    <label class="form-check-label" for="verilog"
+                      >Verilog</label
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-12">
+                  <button
+                    type="button"
+                    class="btn btn-lg btn-primary btn-block btn-generate"
+                  >
+                    Generate and download
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
     </div>
 
-    <div class="container" id="_loader" style="min-height: 100vh;">
-      <div class="row justify-content-center" style="height: 25vh;"></div>
-      <div class="row justify-content-center" style="height: 50vh;">
+    <div class="container" id="_loader" style="min-height: 100vh">
+      <div class="row justify-content-center" style="height: 25vh"></div>
+      <div class="row justify-content-center" style="height: 50vh">
         <img src="./img/loader-drop.svg" height="100%" />
       </div>
     </div>
