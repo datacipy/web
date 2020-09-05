@@ -5,6 +5,7 @@ let checkbox = (label, value) => `<div class="col-md-6">
     type="checkbox"
     value="${value}"
     id="${value}"
+    checked
   />
   <label class="form-check-label" for="${value}">
     ${label}
