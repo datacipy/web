@@ -17,9 +17,9 @@ const paths = [
   ["/:section/:tip", nihil, {
     showSection: "newtip"
   }],
-  ["/:section", nihil, {
-    showSection: "newtip"
-  }],
+  ["/:devkit", (par) => {
+    changeDevkit(par)
+  }, {}],
   ["*", nihil, {
     showSection: "index"
   }],
@@ -29,7 +29,7 @@ const ohc = require("@adent/router")(paths);
 
 // router middleware
 ohc((params, path) => {
-  console.log(params, path);
+  //console.log(params, path);
 });
 
 // --- HASH ROUTER register global ---
@@ -40,7 +40,11 @@ const hdl = require("./js/hdl.js")
 
 
 let kits = {
-  de10lite: require("./js/kit/de10lite.js")
+  de10lite: require("./js/kit/de10lite.js"),
+  omdazz: require("./js/kit/omdazz.js"),
+  ep2c5: require("./js/kit/ep2c5.js")
+
+
 }
 
 //let ast = (packName)
@@ -52,6 +56,14 @@ const dl = require("./js/genSet.js");
 const prepareKit = require("./js/prepareKit.js");
 //dl(packName, kits.de10nano, "vhdl")
 
+let givenKit = "omdazz";
+
+const changeDevkit = (par) => {
+  console.log(par)
+  givenKit = par.devkit
+  prepareKit(kits[givenKit])
+}
+
 $(document).ready(() => {
   // on load
 
@@ -61,7 +73,7 @@ $(document).ready(() => {
   // Router setup
   window.onhashchange = ohc;
   window.onhashchange();
-  prepareKit(kits.de10lite)
+  prepareKit(kits[givenKit])
 
   $("#de10lite button.btn-generate").click(() => {
     let packName = $("#projectName").val().trim();
@@ -78,7 +90,7 @@ $(document).ready(() => {
     }
     featureList.push($(".features option:checked").val())
     console.log(featureList)
-    dl(packName, kits.de10lite, featureList, lang)
+    dl(packName, kits[givenKit], featureList, lang)
   })
 
 });

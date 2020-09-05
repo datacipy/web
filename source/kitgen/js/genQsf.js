@@ -1,15 +1,17 @@
 const genPin = (pin) => `set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to ${pin.toUpperCase()}\n`
 const genPinST = (pin) => `set_instance_assignment -name IO_STANDARD "3.3 V Schmitt Trigger" -to ${pin.toUpperCase()}\n`
-const genPinA = (pin, phy) => `set_location_assignment PIN_${phy.replace("$","")} -to ${pin.toUpperCase()}\n`
+const genPinPU = (pin) => `set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to ${pin.toUpperCase()}\n`
+const genPinA = (pin, phy) => `set_location_assignment PIN_${phy.replace("$","").replace("^","")} -to ${pin.toUpperCase()}\n`
 
 const genType = (port) => {
     if (port.size == 1) {
-        return port.pinAssign[0] !== "$" ? genPin(port.name) : genPinST(port.name)
+        return port.pinAssign[0] === "^" ? genPinPU(port.name) : port.pinAssign[0] !== "$" ? genPin(port.name) : genPinST(port.name)
     } else {
         let out = "";
         let j = 0;
-        for (let i = port.sizeFrom; i < (port.sizeFrom + port.size - 1); i++) {
-            out += port.pinAssign[j++][0] !== "$" ? genPin(port.name + "[" + i + "]") : genPinST(port.name + "[" + i + "]")
+        for (let i = port.sizeFrom; i < (port.sizeFrom + port.size); i++) {
+            out += port.pinAssign[j][0] === "^" ? genPinPU(port.name + "[" + i + "]") : (port.pinAssign[j][0] !== "$" ? genPin(port.name + "[" + i + "]") : genPinST(port.name + "[" + i + "]"))
+            j++
         }
         return out
     }
@@ -24,7 +26,7 @@ const genTypeA = (port) => {
     } else {
         let out = "";
         let j = 0;
-        for (let i = port.sizeFrom; i < (port.sizeFrom + port.size - 1); i++) {
+        for (let i = port.sizeFrom; i < (port.sizeFrom + port.size); i++) {
             out += genPinA(port.name + "[" + i + "]", port.pinAssign[j++])
         }
         return out
@@ -68,7 +70,7 @@ module.exports = (ast) => {
         .join("")
         .replace(/\$\$\$/g, ast.name)
     return `#============================================================
-# Build by datacipy.cz/gen
+# Build by https://datacipy.cz/tools/kitgen
 #============================================================
 
 ${globals}

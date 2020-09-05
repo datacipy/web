@@ -1,4 +1,4 @@
-const kitname = "Terasic DE10-Nano"
+const kitname = "Terasic DE10-Lite"
 const kitphoto = "de10lite.png"
 
 const hdl = require("../hdl.js")
@@ -86,7 +86,7 @@ genAst = (name) => {
     return ast
 }
 
-parameters = () => {
+const parameters = () => {
     return {
         CLOCK: "Clock",
         LED: "LED x10",
@@ -103,11 +103,21 @@ parameters = () => {
 
 }
 
+const selectors = () => [
+    ["GPIO header is for...",
+        [
+            ["GPIO", "GPIO"],
+            ["Multi-touch LCD display", "MTL"]
+        ]
+    ]
+]
+
 module.exports = {
     name: () => {
         return kitname
     },
     photo: () => kitphoto,
     genAst,
-    parameters
+    parameters,
+    selectors
 }
