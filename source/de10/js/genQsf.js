@@ -42,7 +42,7 @@ const gia = (ast, group) => {
         .map(q => genTypeA(ast.port[q])).join("")
     //console.log(port, portPin)
     return `#============================================================
-# CLOCK
+# ${group.toUpperCase()}
 #============================================================
 ${port}
 ${portPin}

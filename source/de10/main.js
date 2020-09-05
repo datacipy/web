@@ -48,7 +48,8 @@ let kits = {
 //console.log(hdl.hdlGen(ast, "verilog"))
 //console.log(hdl.qsfGen(ast))
 
-const dl = require("./js/genSet.js")
+const dl = require("./js/genSet.js");
+const prepareKit = require("./js/prepareKit.js");
 //dl(packName, kits.de10nano, "vhdl")
 
 $(document).ready(() => {
@@ -60,6 +61,7 @@ $(document).ready(() => {
   // Router setup
   window.onhashchange = ohc;
   window.onhashchange();
+  prepareKit(kits.de10lite)
 
   $("#de10lite button.btn-generate").click(() => {
     let packName = $("#projectName").val().trim();

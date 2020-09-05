@@ -1,4 +1,8 @@
+const kitname = "Terasic DE10-Nano"
+const kitphoto = "de10lite.png"
+
 const hdl = require("../hdl.js")
+let dateString = require("../quartusDate.js")()
 
 const globals = {
     FAMILY: '"MAX 10 FPGA"',
@@ -6,18 +10,18 @@ const globals = {
     TOP_LEVEL_ENTITY: '"$$$"',
     ORIGINAL_QUARTUS_VERSION: '"16.0.0"',
     LAST_QUARTUS_VERSION: '"16.0.0"',
-    PROJECT_CREATION_TIME_DATE: '"15:03:50 AUGUST 30,2020"',
+    PROJECT_CREATION_TIME_DATE: `"${dateString}"`,
     DEVICE_FILTER_PACKAGE: "FBGA",
     DEVICE_FILTER_PIN_COUNT: 484,
     DEVICE_FILTER_SPEED_GRADE: 7,
     SDC_FILE: "$$$.SDC"
 }
 
-module.exports = (name) => {
+genAst = (name) => {
 
     let ast = hdl.init(name)
 
-    ast.kit = "Terasic DE10-Nano"
+    ast.kit = kitname
     ast.globals = globals
 
     ast.addPort("adc_clk_10", "in", 1, null, "N5", 0, "CLOCK")
@@ -55,11 +59,11 @@ module.exports = (name) => {
     ast.addPort("sdram_ldqm", "out", 1, null, "V22", 0, "SDRAM")
     ast.addPort("sdram_udqm", "out", 1, null, "J21", 0, "SDRAM")
 
-    ast.addPort("gsensor_cs_n", "out", 1, null, "AB16", 0, "Accelerometer")
-    ast.addPort("gsensor_sclk", "out", 1, null, "AB15", 0, "Accelerometer")
-    ast.addPort("gsensor_sdi", "inout", 1, null, "V11", 0, "Accelerometer")
-    ast.addPort("gsensor_sdo", "inout", 1, null, "V12", 0, "Accelerometer")
-    ast.addPort("gsensor_int", "in", 2, null, ["Y14", "Y13"], 1, "Accelerometer")
+    ast.addPort("gsensor_cs_n", "out", 1, null, "AB16", 0, "ACCELEROMETER")
+    ast.addPort("gsensor_sclk", "out", 1, null, "AB15", 0, "ACCELEROMETER")
+    ast.addPort("gsensor_sdi", "inout", 1, null, "V11", 0, "ACCELEROMETER")
+    ast.addPort("gsensor_sdo", "inout", 1, null, "V12", 0, "ACCELEROMETER")
+    ast.addPort("gsensor_int", "in", 2, null, ["Y14", "Y13"], 1, "ACCELEROMETER")
 
     ast.addPort("gpio", "inout", 36, null, ["V10", "W10", "V9", "W9", "V8", "W8", "V7", "W7", "W6", "V5", "W5", "AA15", "AA14", "W13", "W12", "AB13", "AB12", "Y11", "AB11", "W11", "AB10", "AA10", "AA9", "Y8", "AA8", "Y7", "AA7", "Y6", "AA6", "Y5", "AA5", "Y4", "AB3", "Y3", "AB2", "AA2"], 0, "GPIO")
 
@@ -80,4 +84,30 @@ module.exports = (name) => {
 
     ast.addPort("ledr", "out", 10, "1111111111", ["A8", "A9", "A10", "B10", "D13", "C13", "E14", "D14", "A11", "B11"], 0, "LED")
     return ast
+}
+
+parameters = () => {
+    return {
+        CLOCK: "Clock",
+        LED: "LED x10",
+        KEY: "Buttons x2",
+        VGA: "VGA",
+        ARDUINO: "Arduino",
+        SEG7: "7-segment display x6",
+        SW: "Switch x10",
+        ACCELEROMETER: "Accelerometer",
+        SDRAM: "SDRAM 64 MB",
+
+
+    }
+
+}
+
+module.exports = {
+    name: () => {
+        return kitname
+    },
+    photo: () => kitphoto,
+    genAst,
+    parameters
 }

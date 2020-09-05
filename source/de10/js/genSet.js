@@ -4,7 +4,9 @@ const hdl = require("./hdl.js")
 
 const download = (packName, kit, feat, lang) => {
 
-    let ast = kit(packName)
+    let dateString = require("./quartusDate.js")()
+
+    let ast = kit.genAst(packName)
     let apn = Object.keys(ast.port).filter(q => feat.indexOf(ast.port[q].portGroup) < 0)
     console.log(apn)
     for (let k of apn) {
@@ -16,7 +18,7 @@ const download = (packName, kit, feat, lang) => {
     let qsf = hdl.qsfGen(ast)
 
     let qpf = `
-    DATE = "15:03:50 August 30, 2020"
+    DATE = "${dateString}"
     QUARTUS_VERSION = "16.0.0"
     
     # Revisions
