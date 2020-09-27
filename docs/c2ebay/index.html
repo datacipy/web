@@ -20,6 +20,7 @@
         };
 
         var pn = window.location.pathname.substr(1);
+            if (pn[pn.length-1]=="/") pn = pn.substr(0,pn.length-1)
         if (redir[pn]) {
           window.location.href = redir[pn];
           return;
