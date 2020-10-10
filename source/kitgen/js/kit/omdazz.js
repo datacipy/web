@@ -83,6 +83,7 @@ genAst = (name) => {
 const parameters = () => {
     return {
         CLOCK: "Clock",
+        RESET: "Reset button",
         LED: "LED x4",
         KEY: "Buttons x4",
         VGA: "VGA",
