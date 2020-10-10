@@ -13,7 +13,8 @@ const globals = {
     PROJECT_CREATION_TIME_DATE: `"${dateString}"`,
     NOMINAL_CORE_SUPPLY_VOLTAGE: "1.2V",
     SDC_FILE: "$$$.SDC",
-    CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION: '"USE AS REGULAR IO"'
+    CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION: '"USE AS REGULAR IO"',
+    VHDL_INPUT_VERSION: "VHDL_2008"
 
 }
 
@@ -25,6 +26,8 @@ genAst = (name) => {
     ast.globals = globals
 
     ast.addPort("clk_50", "in", 1, null, "23", 0, "CLOCK")
+
+    ast.addPort("reset_b", "in", 1, null, "25", 0, "RESET")
 
     ast.addPort("key", "in", 4, null, ["88", "89", "90", "91"], 0, "KEY")
 

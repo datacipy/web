@@ -14,7 +14,9 @@ const globals = {
     DEVICE_FILTER_PACKAGE: "FBGA",
     DEVICE_FILTER_PIN_COUNT: 484,
     DEVICE_FILTER_SPEED_GRADE: 7,
-    SDC_FILE: "$$$.SDC"
+    SDC_FILE: "$$$.SDC",
+    VHDL_INPUT_VERSION: "VHDL_2008"
+
 }
 
 genAst = (name) => {
