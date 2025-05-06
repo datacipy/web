@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="cs" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLL Kalkulátor konstant pro FPGA Lattice</title>
+    <!-- Bootstrap CSS - Replit Dark Theme -->
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    <style>
+        /* Custom styles */
+        .table-responsive {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .table th {
+            position: sticky;
+            top: 0;
+            background-color: var(--bs-table-bg);
+            z-index: 1;
+        }
+
+        /* Add more visual distinction to the best result */
+        .table-success {
+            --bs-table-bg: rgba(25, 135, 84, 0.3) !important;
+            font-weight: bold;
+        }
+
+        /* Improve the spacing in the form */
+        .form-label {
+            margin-bottom: 0.25rem;
+        }
+
+        /* Card equal heights */
+        .card {
+            height: 100%;
+        }
+
+        /* Pretty input validation styling */
+        input:invalid {
+            border-color: var(--bs-danger);
+        }
+
+        /* Transition effects */
+        .card, .btn, .form-control, .form-select {
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <header class="pb-3 mb-4 border-bottom">
+            <h1 class="display-5 fw-bold">PLL Kalkulátor konstant pro FPGA Lattice</h1>
+            <p class="text-secondary">Výpočet PLL parametrů pro konfiguraci Lattice FPGA čipů</p>
+        </header>
+
+        <div class="row g-4">
+            <!-- Input Panel -->
+            <div class="col-md-5">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Vstupní frekvence</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="pll-form">
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label for="f_in" class="form-label">Vstupní frekvence (MHz)</label>
+                                    <input type="number" class="form-control" id="f_in" min="0.001" step="0.001" value="12" required>
+                                </div>
+                                <div class="col">
+                                    <label for="f_out" class="form-label">Výstupní frekvence (MHz)</label>
+                                    <input type="number" class="form-control" id="f_out" min="0.001" step="0.001" value="24" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="fpga-family" class="form-label">FPGA Rodina</label>
+                                <select class="form-select" id="fpga-family">
+                                    <option value="custom">Vlastní VCO rozsah</option>
+                                    <option value="ice40-lp-hx" selected>iCE40 LP/HX</option>
+                                    <option value="ice40-ultra">iCE40 Ultra</option>
+                                    <option value="ice40-ultraplus">iCE40 UltraPlus</option>
+                                    <option value="ecp3">ECP3</option>
+                                    <option value="ecp5">ECP5</option>
+                                    <option value="ecp5-5g">ECP5-5G</option>
+                                    <option value="latticexp2">LatticeXP2</option>
+                                </select>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label for="vco_min" class="form-label">VCO Min (MHz)</label>
+                                    <input type="number" class="form-control" id="vco_min" min="0" step="1" value="533" required>
+                                </div>
+                                <div class="col">
+                                    <label for="vco_max" class="form-label">VCO Max (MHz)</label>
+                                    <input type="number" class="form-control" id="vco_max" min="0" step="1" value="1066" required>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100">Spočítej</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="col-md-7">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">Výsledky</h5>
+                            <span class="badge bg-info" id="results-count">0 konfigurací nalezeno</span>
+                        </div>
+                        <div id="relaxed-mode-notice" class="alert alert-warning mt-2 mb-0 py-1 small" style="display: none;">
+                            Zobrazeny přibližné konfigurace. Výsledky mohou mít větší odchylku od požadované frekvence.
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="no-results" class="alert alert-info">
+                            Zadejte frekvence a klikněte na Spočítej pro zobrazení výsledků.
+                        </div>
+                        <div id="results-container" class="table-responsive" style="display: none;">
+                            <table class="table table-hover table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>DIVR</th>
+                                        <th>DIVF</th>
+                                        <th>DIVQ</th>
+                                        <th>VCO (MHz)</th>
+                                        <th>Výstup (MHz)</th>
+                                        <th>Chyba</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="results-table">
+                                    <!-- Výsledky budou doplněny zde -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="pt-3 mt-4 text-body-secondary border-top text-center">
+            <p>PLL Kalkulátor konstant pro FPGA Lattice &copy; 2025 <a href="https://elektroniche.cz" target="_blank">Martin Malý - Elektroniche.cz</a></p>
+        </footer>
+    </div>
+
+    <!-- Bootstrap JavaScript Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Embedded JavaScript -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // FPGA Family Data
+        const fpgaFamilies = [
+            {
+                "family": "ice40-lp-hx",
+                "name": "iCE40 LP/HX",
+                "min": 533,
+                "max": 1066
+            },
+            {
+                "family": "ice40-ultra",
+                "name": "iCE40 Ultra",
+                "min": 533,
+                "max": 1066
+            },
+            {
+                "family": "ice40-ultraplus",
+                "name": "iCE40 UltraPlus",
+                "min": 533,
+                "max": 1066
+            },
+            {
+                "family": "ecp3",
+                "name": "ECP3",
+                "min": 500,
+                "max": 1000
+            },
+            {
+                "family": "ecp5",
+                "name": "ECP5",
+                "min": 400,
+                "max": 800
+            },
+            {
+                "family": "ecp5-5g",
+                "name": "ECP5-5G",
+                "min": 400,
+                "max": 800
+            },
+            {
+                "family": "latticexp2",
+                "name": "LatticeXP2",
+                "min": 435,
+                "max": 870
+            }
+        ];
+
+        // Form elements
+        const pllForm = document.getElementById('pll-form');
+        const fpgaFamilySelect = document.getElementById('fpga-family');
+        const vcoMinInput = document.getElementById('vco_min');
+        const vcoMaxInput = document.getElementById('vco_max');
+        const resultsTable = document.getElementById('results-table');
+        const resultsContainer = document.getElementById('results-container');
+        const noResults = document.getElementById('no-results');
+        const resultsCount = document.getElementById('results-count');
+
+        // Update VCO range when FPGA family changes
+        fpgaFamilySelect.addEventListener('change', function() {
+            const selectedFamily = this.value;
+            
+            // If custom is selected, allow user to input custom values
+            if (selectedFamily === 'custom') {
+                return;
+            }
+            
+            // Find the selected family data
+            const familyData = fpgaFamilies.find(f => f.family === selectedFamily);
+            
+            if (familyData) {
+                vcoMinInput.value = familyData.min;
+                vcoMaxInput.value = familyData.max;
+            }
+        });
+
+        // PLL calculation function
+        const calcPLLParams = (f_in, f_out, vcomin, vcomax, relaxedTolerance = false) => {
+            const results = [];
+            // Default tolerance is 0.01% (strict)
+            // Relaxed tolerance is 5% when no exact matches are found
+            const tolerance = relaxedTolerance ? 0.05 : 0.0001;
+
+            for (let DIVQ = 1; DIVQ <= 6; DIVQ++) {
+                const f_vco = f_out * Math.pow(2, DIVQ);
+
+                // Skip this DIVQ value if VCO is completely out of range
+                if (f_vco < vcomin * 0.95 || f_vco > vcomax * 1.05) continue;
+
+                const M = f_vco / f_in;
+
+                for (let DIVR = 0; DIVR <= 15; DIVR++) {
+                    const numerator = M * (DIVR + 1);
+                    const DIVF = Math.round(numerator - 1);
+
+                    if (DIVF < 0 || DIVF > 127) continue;
+
+                    // Calculate actual output frequency and error
+                    const test_vco = (f_in / (DIVR + 1)) * (DIVF + 1);
+                    const test_out = test_vco / Math.pow(2, DIVQ);
+
+                    const error = Math.abs(test_out - f_out);
+                    const errorPpm = (error / f_out) * 1e6; // Error in parts per million
+                    const errorPercent = (error / f_out) * 100; // Error in percent
+
+                    // Check if VCO is within limits (can be slightly relaxed in relaxed mode)
+                    const vcoMax = relaxedTolerance ? vcomax * 1.05 : vcomax;
+                    const vcoMin = relaxedTolerance ? vcomin * 0.95 : vcomin;
+                    
+                    if (test_vco >= vcoMin && test_vco <= vcoMax) {
+                        // Add to results if error is within tolerance
+                        if (error < f_out * tolerance) {
+                            results.push({ 
+                                DIVR, 
+                                DIVF, 
+                                DIVQ, 
+                                f_vco: test_vco, 
+                                f_out: test_out,
+                                error: errorPpm,
+                                errorPercent: errorPercent
+                            });
+                        }
+                    }
+                }
+            }
+
+            // Sort results by error (ascending)
+            return results.sort((a, b) => a.error - b.error);
+        };
+
+        // Format number to show proper units
+        const formatFrequency = (frequency) => {
+            return (frequency / 1e6).toFixed(6);
+        };
+
+        // Handle form submission
+        pllForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get input values
+            const f_in = parseFloat(document.getElementById('f_in').value) * 1e6; // Convert MHz to Hz
+            const f_out = parseFloat(document.getElementById('f_out').value) * 1e6; // Convert MHz to Hz
+            const vcomin = parseFloat(vcoMinInput.value) * 1e6; // Convert MHz to Hz
+            const vcomax = parseFloat(vcoMaxInput.value) * 1e6; // Convert MHz to Hz
+            
+            // Validate inputs
+            if (f_in <= 0 || f_out <= 0 || vcomin <= 0 || vcomax <= 0 || vcomin >= vcomax) {
+                alert('Prosím zadejte platné hodnoty. Frekvence musí být kladné a VCO min musí být menší než VCO max.');
+                return;
+            }
+            
+            // First try with strict tolerance
+            let results = calcPLLParams(f_in, f_out, vcomin, vcomax, false);
+            
+            // If no results found, try with relaxed tolerance
+            let usingRelaxedMode = false;
+            if (results.length === 0) {
+                results = calcPLLParams(f_in, f_out, vcomin, vcomax, true);
+                usingRelaxedMode = true;
+            }
+            
+            // Update results count with mode information
+            if (usingRelaxedMode && results.length > 0) {
+                resultsCount.textContent = `${results.length} přibližných konfigurací nalezeno`;
+                resultsCount.classList.add('bg-warning');
+                resultsCount.classList.remove('bg-info');
+            } else {
+                resultsCount.textContent = `${results.length} konfigurací nalezeno`;
+                resultsCount.classList.add('bg-info');
+                resultsCount.classList.remove('bg-warning');
+            }
+            
+            // Clear previous results
+            resultsTable.innerHTML = '';
+            
+            // Show/hide results elements
+            if (results.length === 0) {
+                resultsContainer.style.display = 'none';
+                noResults.textContent = 'Nebyly nalezeny žádné validní PLL konfigurace s danými parametry. Zkuste upravit vstupní frekvence nebo změnit VCO rozsah.';
+                noResults.style.display = 'block';
+                return;
+            }
+            
+            // Show results and hide "no results" message
+            resultsContainer.style.display = 'block';
+            noResults.style.display = 'none';
+            
+            // Show/hide relaxed mode notice
+            const relaxedModeNotice = document.getElementById('relaxed-mode-notice');
+            if (usingRelaxedMode) {
+                relaxedModeNotice.style.display = 'block';
+            } else {
+                relaxedModeNotice.style.display = 'none';
+            }
+            
+            // Add results to table
+            results.forEach((result, index) => {
+                const row = document.createElement('tr');
+                
+                // Highlight the best result
+                if (index === 0) {
+                    row.classList.add('table-success');
+                }
+                
+                // Add warning class if error is significant (only in relaxed mode)
+                if (usingRelaxedMode && result.errorPercent > 0.01) {
+                    row.classList.add('table-warning');
+                }
+                
+                // Calculate absolute and relative errors for display
+                const absoluteError = Math.abs(result.f_out - f_out) / 1e6; // MHz
+                const errorDisplay = usingRelaxedMode ? 
+                    `${result.errorPercent.toFixed(3)}% (${absoluteError.toFixed(6)} MHz)` : 
+                    `${result.error.toFixed(2)} ppm`;
+                    
+                row.innerHTML = `
+                    <td>${result.DIVR}</td>
+                    <td>${result.DIVF}</td>
+                    <td>${result.DIVQ}</td>
+                    <td>${(result.f_vco / 1e6).toFixed(3)}</td>
+                    <td>${(result.f_out / 1e6).toFixed(6)}</td>
+                    <td>${errorDisplay}</td>
+                `;
+                
+                resultsTable.appendChild(row);
+            });
+        });
+
+        // Initialize with default FPGA family
+        fpgaFamilySelect.dispatchEvent(new Event('change'));
+    });
+    </script>
+</body>
+</html>
